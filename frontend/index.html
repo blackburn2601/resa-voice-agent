@@ -5,8 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
     <title>Resa – Musterhaus Verwaltung</title>
+
+    <!--
+      Start-Ladeanzeige, bewusst inline.
+
+      Zwischen dem ersten Byte und dem Moment, in dem Vue montiert ist, liegt
+      eine Lücke: Ohne dieses Stück bliebe die Seite so lange schlicht weiß
+      bzw. schwarz. Die Anzeige gleicht der aus LadeSchirm.vue, damit beim
+      Übergang nichts springt, und wird in main.ts wieder entfernt.
+    -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #0d1117;
+      }
+      #start {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: grid;
+        place-items: center;
+        background: #0d1117;
+        transition: opacity 0.22s ease;
+        font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      }
+      #start.weg {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #start .mitte {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.4rem;
+      }
+      #start .wellenform {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 56px;
+      }
+      #start i {
+        width: 6px;
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #4a9d8e, #5b8dd6);
+        transform: scaleY(0.18);
+        transform-origin: center;
+        animation: start-atmen 1.15s ease-in-out infinite;
+      }
+      #start p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: #6b7887;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      @keyframes start-atmen {
+        0%,
+        100% {
+          transform: scaleY(0.18);
+          opacity: 0.55;
+        }
+        45% {
+          transform: scaleY(1);
+          opacity: 1;
+        }
+      }
+      /* Kein Skript zum Auslesen des gemerkten Themas: Die
+         Content-Security-Policy erlaubt inline Styles, aber keine inline
+         Scripts. Die Systemeinstellung deckt den Regelfall ab; wer bewusst
+         gegen sein System umgestellt hat, sieht für Sekundenbruchteile die
+         andere Fläche. */
+      @media (prefers-color-scheme: light) {
+        html,
+        body,
+        #start {
+          background: #f6f7f9;
+        }
+        #start p {
+          color: #8593a1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #start i {
+          animation: none;
+          transform: scaleY(0.55);
+        }
+        #start {
+          transition: none;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="start">
+      <div class="mitte">
+        <div class="wellenform" aria-hidden="true">
+          <i style="animation-delay: 0s"></i>
+          <i style="animation-delay: 0.12s"></i>
+          <i style="animation-delay: 0.24s"></i>
+          <i style="animation-delay: 0.36s"></i>
+          <i style="animation-delay: 0.24s"></i>
+          <i style="animation-delay: 0.12s"></i>
+          <i style="animation-delay: 0s"></i>
+        </div>
+        <p>Resa wird geladen</p>
+      </div>
+    </div>
+
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

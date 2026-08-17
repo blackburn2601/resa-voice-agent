@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAuth } from '@/stores/auth'
+import { useLaden } from '@/stores/laden'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -30,6 +31,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (nach) => {
+  useLaden().starten()
   const auth = useAuth()
   // Beim ersten Aufruf ist noch unbekannt, ob eine Sitzung besteht – das Cookie
   // ist httpOnly, also fragen wir den Server.
@@ -43,5 +45,10 @@ router.beforeEach(async (nach) => {
   }
   return true
 })
+
+// In allen drei Fällen beenden: sonst bliebe der Schirm nach einem
+// abgebrochenen oder fehlgeschlagenen Wechsel für immer stehen.
+router.afterEach(() => useLaden().beenden())
+router.onError(() => useLaden().beenden())
 
 export default router

@@ -2,7 +2,9 @@
 import { onMounted, ref } from 'vue'
 
 import { api, type IndexStatus, type KnowledgeDocument } from '@/api/client'
+import { useLaden } from '@/stores/laden'
 
+const laden = useLaden()
 const dokumente = ref<KnowledgeDocument[]>([])
 const zustand = ref<IndexStatus | null>(null)
 const meldung = ref<{ art: 'ok' | 'fehler'; text: string } | null>(null)
@@ -12,20 +14,23 @@ const frage = ref('')
 const antwort = ref('')
 const dateiFeld = ref<HTMLInputElement | null>(null)
 
-async function laden() {
+async function neuLaden() {
   const [liste, status] = await Promise.all([api.documents(), api.indexStatus()])
   dokumente.value = liste
   zustand.value = status
 }
 
-onMounted(laden)
+onMounted(neuLaden)
 
-async function mit<T>(aufgabe: () => Promise<T>, erfolg: string) {
+/** `schirm` nur für Vorgänge, die spürbar dauern – Einbetten und Indizieren
+ *  brauchen Sekunden, eine reine Knopfsperre wirkt da wie ein Hänger. */
+async function mit<T>(aufgabe: () => Promise<T>, erfolg: string, schirm?: string) {
   laeuft.value = true
   meldung.value = null
+  if (schirm) laden.starten(schirm)
   try {
     await aufgabe()
-    await laden()
+    await neuLaden()
     meldung.value = { art: 'ok', text: erfolg }
   } catch (ausnahme) {
     meldung.value = {
@@ -33,6 +38,7 @@ async function mit<T>(aufgabe: () => Promise<T>, erfolg: string) {
       text: ausnahme instanceof Error ? ausnahme.message : 'Fehlgeschlagen.',
     }
   } finally {
+    if (schirm) laden.beenden()
     laeuft.value = false
   }
 }
@@ -44,6 +50,7 @@ function faqAnlegen() {
   void mit(
     () => api.createFaq(f, a),
     'Eintrag angelegt und indiziert.',
+    'Eintrag wird eingebettet',
   ).then(() => {
     if (meldung.value?.art === 'ok') {
       frage.value = ''
@@ -55,7 +62,7 @@ function faqAnlegen() {
 function hochladen(event: Event) {
   const datei = (event.target as HTMLInputElement).files?.[0]
   if (!datei) return
-  void mit(() => api.upload(datei), `${datei.name} aufgenommen.`).then(() => {
+  void mit(() => api.upload(datei), `${datei.name} aufgenommen.`, 'Dokument wird eingelesen').then(() => {
     if (dateiFeld.value) dateiFeld.value.value = ''
   })
 }
@@ -66,7 +73,7 @@ function loeschen(dokument: KnowledgeDocument) {
 }
 
 function neuIndizieren() {
-  void mit(() => api.reindex(), 'Abgeglichen.')
+  void mit(() => api.reindex(), 'Abgeglichen.', 'Index wird abgeglichen')
 }
 
 const quellNamen: Record<string, string> = {

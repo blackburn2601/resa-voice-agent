@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
+import LadeSchirm from '@/components/LadeSchirm.vue'
 import NavIcon from '@/components/NavIcon.vue'
 import { useAuth } from '@/stores/auth'
 import { useEvents } from '@/stores/events'
@@ -112,8 +113,9 @@ const navigation = [
 
     <main>
       <RouterView v-if="auth.geprueft" />
-      <p v-else class="laden still">Einen Moment …</p>
     </main>
+
+    <LadeSchirm />
   </div>
 </template>
 
@@ -237,11 +239,6 @@ nav {
 
 main {
   min-width: 0;
-}
-
-.laden {
-  text-align: center;
-  padding: 4rem 1rem;
 }
 
 /* --- Schublade auf schmalen Geräten ----------------------------------- */
