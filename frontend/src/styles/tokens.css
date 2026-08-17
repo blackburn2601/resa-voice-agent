@@ -1,0 +1,77 @@
+/*
+  Gestaltungsgrundlage.
+
+  Der Ton ist bewusst ruhig und ernst: Die Oberfläche zeigt Notfälle. Alles,
+  was aufmerksamkeitsheischend blinkt, würde genau dann stören, wenn es darauf
+  ankommt. Farbe wird deshalb sparsam eingesetzt und trägt Bedeutung –
+  Bernstein heißt dringend, Rot heißt Notfall, sonst bleibt es gedeckt.
+
+  Keine Fremdschriften: Die Content-Security-Policy erlaubt nur eigene Quellen,
+  und ein Systemschrift-Stapel lädt ohnehin sofort.
+*/
+
+:root {
+  color-scheme: dark light;
+
+  /* Flächen – von tief nach hoch */
+  --flaeche-0: #0d1117;
+  --flaeche-1: #151b23;
+  --flaeche-2: #1c242e;
+  --flaeche-3: #26313d;
+  --rand: #2c3742;
+  --rand-stark: #3d4a58;
+
+  /* Schrift */
+  --text: #e8edf3;
+  --text-leise: #9aa8b8;
+  --text-still: #6b7887;
+
+  /* Bedeutungsträger */
+  --ruhig: #4a9d8e;
+  --ruhig-schwach: #16302e;
+  --dringend: #d99a2b;
+  --dringend-schwach: #33280f;
+  --notfall: #e5484d;
+  --notfall-schwach: #3a1618;
+  --hinweis: #5b8dd6;
+  --hinweis-schwach: #17253c;
+
+  /* Maße */
+  --radius-s: 4px;
+  --radius: 8px;
+  --radius-l: 14px;
+  --spur: 0 1px 2px rgb(0 0 0 / 0.3);
+  --spur-hoch: 0 8px 30px rgb(0 0 0 / 0.35);
+
+  --schrift: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --schrift-mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono",
+    Menlo, Consolas, monospace;
+
+  --breite: 1240px;
+}
+
+:root[data-theme='light'] {
+  --flaeche-0: #f6f7f9;
+  --flaeche-1: #ffffff;
+  --flaeche-2: #f0f2f5;
+  --flaeche-3: #e5e9ee;
+  --rand: #dce1e7;
+  --rand-stark: #c3ccd6;
+
+  --text: #16202b;
+  --text-leise: #5a6875;
+  --text-still: #8593a1;
+
+  --ruhig: #2f7d70;
+  --ruhig-schwach: #e2f2ef;
+  --dringend: #a86e0d;
+  --dringend-schwach: #fbf0da;
+  --notfall: #c62a2f;
+  --notfall-schwach: #fbe4e5;
+  --hinweis: #35619f;
+  --hinweis-schwach: #e4ecf8;
+
+  --spur: 0 1px 2px rgb(16 32 43 / 0.08);
+  --spur-hoch: 0 8px 30px rgb(16 32 43 / 0.12);
+}

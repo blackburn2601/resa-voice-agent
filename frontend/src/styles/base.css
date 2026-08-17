@@ -1,0 +1,244 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  font-family: var(--schrift);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--flaeche-0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+h2 {
+  font-size: 1.15rem;
+}
+h3 {
+  font-size: 0.95rem;
+}
+
+a {
+  color: var(--hinweis);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Sichtbarer Fokus – Tastaturbedienung darf nicht schlechter sein als Maus. */
+:focus-visible {
+  outline: 2px solid var(--hinweis);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+.mono {
+  font-family: var(--schrift-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.leise {
+  color: var(--text-leise);
+}
+.still {
+  color: var(--text-still);
+  font-size: 0.85rem;
+}
+
+/* --- Bausteine --------------------------------------------------------- */
+
+.karte {
+  background: var(--flaeche-1);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius-l);
+  box-shadow: var(--spur);
+}
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--rand-stark);
+  border-radius: var(--radius);
+  background: var(--flaeche-2);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.knopf:hover:not(:disabled) {
+  background: var(--flaeche-3);
+}
+.knopf:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.knopf.haupt {
+  background: var(--ruhig);
+  border-color: transparent;
+  color: #04110f;
+  font-weight: 600;
+}
+.knopf.haupt:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.knopf.warn {
+  background: var(--notfall);
+  border-color: transparent;
+  color: #fff;
+}
+.knopf.schlicht {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-leise);
+  padding: 0.35rem 0.5rem;
+}
+.knopf.schlicht:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--flaeche-2);
+}
+
+.feld {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: var(--flaeche-0);
+  border: 1px solid var(--rand-stark);
+  border-radius: var(--radius);
+  color: var(--text);
+}
+.feld::placeholder {
+  color: var(--text-still);
+}
+
+label.beschriftung {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-leise);
+  margin-bottom: 0.35rem;
+}
+
+.marke {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.marke.notfall {
+  background: var(--notfall-schwach);
+  color: var(--notfall);
+}
+.marke.dringend {
+  background: var(--dringend-schwach);
+  color: var(--dringend);
+}
+.marke.normal {
+  background: var(--flaeche-3);
+  color: var(--text-leise);
+}
+.marke.ruhig {
+  background: var(--ruhig-schwach);
+  color: var(--ruhig);
+}
+.marke.hinweis {
+  background: var(--hinweis-schwach);
+  color: var(--hinweis);
+}
+
+.hinweisbox {
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--rand);
+  background: var(--flaeche-2);
+  font-size: 0.9rem;
+}
+.hinweisbox.fehler {
+  background: var(--notfall-schwach);
+  border-color: var(--notfall);
+  color: var(--notfall);
+}
+
+/* Tabellen brechen auf schmalen Geräten aus – deshalb eigener Scrollbereich,
+   damit nie die ganze Seite waagerecht wandert. */
+.tabellenrahmen {
+  overflow-x: auto;
+}
+
+table.liste {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+table.liste th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-still);
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--rand);
+  white-space: nowrap;
+}
+table.liste td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--rand);
+  vertical-align: top;
+}
+table.liste tbody tr {
+  cursor: pointer;
+}
+table.liste tbody tr:hover {
+  background: var(--flaeche-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

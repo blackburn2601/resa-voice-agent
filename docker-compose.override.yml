@@ -1,0 +1,30 @@
+# Wird von `docker compose` automatisch gelesen und gilt nur für die
+# Entwicklung. Auf dem Server diese Datei nicht ausrollen bzw. mit
+# `docker compose -f docker-compose.yml ...` gezielt umgehen.
+services:
+  api:
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: "true"
+    # Quellcode direkt einhängen: Codeänderungen wirken ohne Rebuild, und
+    # generierte Migrationen landen sofort im Repo statt nur im Container.
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+      # Tests laufen nur in der Entwicklung; das Produktions-Image enthält sie
+      # bewusst nicht.
+      - ./backend/tests:/app/tests
+      - ./backend/tools:/app/tools
+      - ./backend/pyproject.toml:/app/pyproject.toml
+    # timeout-graceful-shutdown: Ohne Deckel wartet uvicorn beim Reload auf
+    # langlebige Verbindungen (WebSocket, SSE) und bleibt hängen.
+    command:
+      - uvicorn
+      - app.main:app
+      - "--host=0.0.0.0"
+      - "--port=8000"
+      - "--reload"
+      - "--timeout-graceful-shutdown=5"
+    ports:
+      - "8000:8000"

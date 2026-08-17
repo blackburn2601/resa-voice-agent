@@ -1,0 +1,98 @@
+name: resa
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-resa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-resa}
+      POSTGRES_DB: ${POSTGRES_DB:-resa}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-resa} -d ${POSTGRES_DB:-resa}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  qdrant:
+    # Fest gepinnt: der Python-Client prüft die Serverversion und warnt bei
+    # mehr als einer Minor-Version Abstand. Beide zusammen anheben.
+    image: qdrant/qdrant:v1.19.0
+    restart: unless-stopped
+    environment:
+      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:-resa-qdrant-key}
+    volumes:
+      - qdrant_data:/qdrant/storage
+    # Bewusst kein ports-Eintrag: Qdrant bleibt im internen Netz.
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Nur für Deployments ohne erreichbare Ollama-Instanz:
+  #   docker compose --profile local-embeddings up
+  # Danach OLLAMA_BASE_URL=http://ollama:11434 setzen.
+  ollama:
+    image: ollama/ollama:0.12.11
+    profiles: ["local-embeddings"]
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Weboberfläche: http://localhost:8025
+
+  api:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+      - uploads:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).status==200 else 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frontend/dist:/srv:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  qdrant_data:
+  ollama_data:
+  uploads:
+  caddy_data:
+  caddy_config:

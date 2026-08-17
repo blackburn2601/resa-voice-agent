@@ -1,0 +1,13 @@
+.env
+data/*.db
+data/resa-probe.mp3
+data/ws-probe/
+backend/uploads/
+frontend/dist/
+frontend/node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+.DS_Store
