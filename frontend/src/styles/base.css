@@ -234,6 +234,12 @@ table.liste tbody tr:hover {
   background: var(--flaeche-2);
 }
 
+/* Pauschalbremse für Bewegung. Bewusst grob – sie soll auch Animationen
+   erwischen, an die beim Schreiben niemand gedacht hat.
+
+   Wo eine Rückmeldung ohne Bewegung sinnvoll bleibt (etwa der Ladeschirm),
+   hebt die jeweilige Komponente das mit höherer Spezifität und !important
+   wieder auf und blendet statt zu verschieben. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

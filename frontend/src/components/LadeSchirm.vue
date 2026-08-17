@@ -104,12 +104,27 @@ const takte = [0, 0.12, 0.24, 0.36, 0.24, 0.12, 0]
   opacity: 0;
 }
 
-/* Ohne Bewegung bleibt eine ruhige, aber sichtbare Anzeige. */
+@keyframes blinzeln {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Bei reduzierter Bewegung wird nichts mehr verschoben – aber es bleibt ein
+   Lebenszeichen. Ein völlig starrer Ladeschirm sieht eingefroren aus, und
+   reines Auf- und Abblenden löst keine vestibulären Reize aus.
+
+   Die beiden !important sind nötig, weil base.css unter dieser Einstellung
+   pauschal jede Animationsdauer auf 0,01 ms setzt. */
 @media (prefers-reduced-motion: reduce) {
   .balken {
-    animation: none;
     transform: scaleY(0.55);
-    opacity: 0.8;
+    animation-name: blinzeln !important;
+    animation-duration: 2s !important;
   }
   .verblassen-enter-active,
   .verblassen-leave-active {

@@ -89,10 +89,21 @@
           color: #8593a1;
         }
       }
+      @keyframes start-blinzeln {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      /* Wie in LadeSchirm.vue: kein Verschieben, aber ein Lebenszeichen. */
       @media (prefers-reduced-motion: reduce) {
         #start i {
-          animation: none;
           transform: scaleY(0.55);
+          animation-name: start-blinzeln;
+          animation-duration: 2s;
         }
         #start {
           transition: none;
